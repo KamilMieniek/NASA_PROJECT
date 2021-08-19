@@ -1,0 +1,25 @@
+{
+  "name": "nasa_project_ztm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-server":"npm install --prefix server",
+    "install-client":"npm install --prefix client",
+    "install":"npm run install-server ",
+    "server" : "cd server && npm run watch",
+    "client" : "cd client && npm start ",
+    "watch" : "npm run server & npm run client",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KamilMieniek/NASA_PROJECT_ztm.git"
+  },
+  "author": "Kamil Mieniek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KamilMieniek/NASA_PROJECT_ztm/issues"
+  },
+  "homepage": "https://github.com/KamilMieniek/NASA_PROJECT_ztm#readme"
+}
