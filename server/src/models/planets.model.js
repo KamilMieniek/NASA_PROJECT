@@ -8,6 +8,12 @@ function isHabitablePlanet(planet) {
     && planet['koi_prad'] < 1.6;
 }
 
+function getAllHabitablePlanets(){
+    return habitablePlanets
+}
+
+
+
 function loadPlanetData(){ 
     return new Promise((resolve,reject) => {
 
@@ -36,5 +42,5 @@ function loadPlanetData(){
 
   module.exports = {
       loadPlanetData: loadPlanetData,
-      planets: habitablePlanets
+      getAllHabitablePlanets : getAllHabitablePlanets
   }
