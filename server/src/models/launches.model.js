@@ -2,7 +2,7 @@ const launches = new Map()
 
 
 let latestFlightNumber = 100;
-const launch = {
+const launch231 = {
 flightNumber: 100,
 mission : "Kepler Exploration X",
 rocket : "Explorer IS1",
@@ -13,7 +13,7 @@ upcoming: true,
 success: true,
 }
 
-launches.set(launch.flightNumber,launch)
+launches.set(launch231.flightNumber,launch231)
 
 function getAllLaunches(){
     return [...launches.values()]
@@ -26,9 +26,20 @@ function addNewLaunch(launch){
         upcoming : true,
         flightNumber : latestFlightNumber}))
 }
+function existLaunchWithId(id){
+    return launches.has(Number(id))
+}
+function abortLaunchByID(id){
+const abortedLaunch = launches.get(Number(id))
+abortedLaunch.upcoming = false;
+abortedLaunch.success = false;
+return abortedLaunch
 
+}
 
 module.exports = {
     getAllLaunches : getAllLaunches,
-    addNewLaunch : addNewLaunch
+    addNewLaunch : addNewLaunch,
+    abortLaunchByID : abortLaunchByID,
+    existLaunchWithId : existLaunchWithId
 }
