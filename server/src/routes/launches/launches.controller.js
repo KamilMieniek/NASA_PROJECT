@@ -12,6 +12,7 @@ function httpAddNewLaunch(req,res){
             error : 'Missing required launch property'
         })
     }
+
     launch.launchDate = new Date(launch.launchDate)
     if (isNaN(launch.launchDate)) {
         return res.status(400).json({
@@ -19,7 +20,7 @@ function httpAddNewLaunch(req,res){
         })
     }
     addNewLaunch(launch)
-    return res.status(201).json({information : "launch added"})
+    return res.status(201).json(Object.assign({information : "launch added"},launch))
 };
 
 function httpAbortLaunch(req,res){

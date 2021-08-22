@@ -4,7 +4,7 @@
   "description": "NASA Mission control api",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "cls && jest",
     "test-watch": "jest --watch",
     "watch": "set PORT=5000 && nodemon ./src/server.js",
     "start": "set PORT=5000 && node ./src/server.js"
@@ -13,7 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^27.0.6",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "supertest": "^6.1.6"
   },
   "dependencies": {
     "cors": "^2.8.5",
