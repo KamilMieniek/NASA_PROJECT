@@ -1,5 +1,5 @@
-// const launches = require('./launches.mongo');
-const launches = new Map();
+const launchesDataBase = require('./launches.mongo');
+// const launches = new Map();
 
 let latestFlightNumber = 100;
 const launch231 = {
@@ -13,23 +13,50 @@ const launch231 = {
   success: true,
 };
 
-launches.set(launch231.flightNumber, launch231);
-
-function getAllLaunches() {
-  return [...launches.values()];
+async function getAllLaunches() {
+  try {
+    return await launchesDataBase.find({});
+  } catch (error) {
+    console.error(error);
+  }
 }
-function addNewLaunch(launch) {
-  latestFlightNumber++;
-  launches.set(
-    latestFlightNumber,
-    Object.assign(launch, {
-      success: true,
-      customer: ['ZTM', 'NASA'],
-      upcoming: true,
-      flightNumber: latestFlightNumber,
-    })
+async function saveLaunch(launch) {
+  await launchesDataBase.findOne(
+    { flightNumber: launch.flightNumber },
+    launch,
+    {
+      upsert: true,
+    }
   );
+  console.log(`done ${JSON.stringify(launch)}`);
 }
+
+function addNewLaunch(launch) {
+  //launch store properties: mission, rocket, destination, launchDate
+  // missing flightNumber, customers, upcoming, success
+
+  launch = Object.assign(
+    {
+      flightNumber: 100,
+      customers: ['ZTM', 'NASA'],
+      upcoming: true,
+      success: true,
+    },
+    launch
+  );
+  saveLaunch(launch);
+}
+
+function handleError(error) {
+  console.log('Cosik sie wyjebało ' + error);
+}
+addNewLaunch({
+  information: 'launch added',
+  mission: 'ZTM124233',
+  rocket: 'ZTM EXP',
+  destination: 'Polsza',
+  launchDate: '2030-01-12T23:00:00.000Z',
+});
 function existLaunchWithId(id) {
   return launches.has(Number(id));
 }

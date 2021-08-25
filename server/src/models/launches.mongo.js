@@ -22,7 +22,7 @@ const launchesSchema = new mongoose.Schema({
     required: true,
   },
   customers: [String],
-  upcomming: {
+  upcoming: {
     type: Boolean,
     required: true,
   },
@@ -33,4 +33,4 @@ const launchesSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Launch',launchesSchema)
+module.exports = mongoose.model('Launch', launchesSchema);
