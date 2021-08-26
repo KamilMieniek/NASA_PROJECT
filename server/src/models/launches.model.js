@@ -1,62 +1,60 @@
 const launchesDataBase = require('./launches.mongo');
-// const launches = new Map();
+const planets = require('./planets.mongo');
 
-let latestFlightNumber = 100;
-const launch231 = {
-  flightNumber: 100,
-  mission: 'Kepler Exploration X',
-  rocket: 'Explorer IS1',
-  launchDate: new Date('December 27, 2030'),
-  destination: 'Kepler-452 b',
-  customer: ['ZTM', 'NASA'],
-  upcoming: true,
-  success: true,
-};
+let DEFAULT_FLIGHT_NUMBER = 100;
 
 async function getAllLaunches() {
   try {
-    return await launchesDataBase.find({});
+    return await launchesDataBase.find(
+      {},
+      {
+        _id: 0,
+        __v: 0,
+      }
+    );
   } catch (error) {
     console.error(error);
   }
 }
+
 async function saveLaunch(launch) {
-  await launchesDataBase.findOne(
+  const planet = await planets.findOne({ keplerName: launch.destination });
+  if (!planet) {
+    throw new Error('No matching planet was found');
+  }
+  await launchesDataBase.updateOne(
     { flightNumber: launch.flightNumber },
     launch,
     {
       upsert: true,
     }
   );
-  console.log(`done ${JSON.stringify(launch)}`);
 }
 
-function addNewLaunch(launch) {
+async function getLatestFLightNumber() {
+  const latestLaunch = await launchesDataBase.findOne().sort('+flightNumber');
+  if (!latestLaunch) {
+    return DEFAULT_FLIGHT_NUMBER;
+  }
+  return latestLaunch.flightNumber;
+}
+
+async function scheduleNewLaunch(launch) {
   //launch store properties: mission, rocket, destination, launchDate
   // missing flightNumber, customers, upcoming, success
-
+  const newFlightNumber = (await getLatestFLightNumber()) + 1;
   launch = Object.assign(
     {
-      flightNumber: 100,
-      customers: ['ZTM', 'NASA'],
+      flightNumber: newFlightNumber,
+      customers: ['NASA'],
       upcoming: true,
       success: true,
     },
     launch
   );
-  saveLaunch(launch);
+  await saveLaunch(launch);
 }
 
-function handleError(error) {
-  console.log('Cosik sie wyjebało ' + error);
-}
-addNewLaunch({
-  information: 'launch added',
-  mission: 'ZTM124233',
-  rocket: 'ZTM EXP',
-  destination: 'Polsza',
-  launchDate: '2030-01-12T23:00:00.000Z',
-});
 function existLaunchWithId(id) {
   return launches.has(Number(id));
 }
@@ -69,7 +67,7 @@ function abortLaunchByID(id) {
 
 module.exports = {
   getAllLaunches: getAllLaunches,
-  addNewLaunch: addNewLaunch,
+  scheduleNewLaunch: scheduleNewLaunch,
   abortLaunchByID: abortLaunchByID,
   existLaunchWithId: existLaunchWithId,
 };
