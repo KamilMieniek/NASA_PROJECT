@@ -32,7 +32,7 @@ async function saveLaunch(launch) {
 }
 
 async function getLatestFLightNumber() {
-  const latestLaunch = await launchesDataBase.findOne().sort('+flightNumber');
+  const latestLaunch = await launchesDataBase.findOne().sort('-flightNumber');
   if (!latestLaunch) {
     return DEFAULT_FLIGHT_NUMBER;
   }
@@ -43,31 +43,39 @@ async function scheduleNewLaunch(launch) {
   //launch store properties: mission, rocket, destination, launchDate
   // missing flightNumber, customers, upcoming, success
   const newFlightNumber = (await getLatestFLightNumber()) + 1;
-  launch = Object.assign(
-    {
-      flightNumber: newFlightNumber,
-      customers: ['NASA'],
-      upcoming: true,
-      success: true,
-    },
-    launch
-  );
+  launch = Object.assign(launch, {
+    flightNumber: newFlightNumber,
+    customers: ['NASA'],
+    upcoming: true,
+    success: true,
+  });
   await saveLaunch(launch);
 }
 
-function existLaunchWithId(id) {
-  return launches.has(Number(id));
+async function existLaunchWithId(id) {
+  // return launches.has(Number(id));
+  return await launchesDataBase.exists({ flightNumber: id });
 }
-function abortLaunchByID(id) {
-  const abortedLaunch = launches.get(Number(id));
-  abortedLaunch.upcoming = false;
-  abortedLaunch.success = false;
-  return abortedLaunch;
+async function abortLaunchByFlightNumber(id) {
+  try {
+    const abortedLaunch = await launchesDataBase.updateOne(
+      { flightNumber: id },
+      { upcoming: false, success: false }
+    );
+    // return (
+    //   abortedLaunch.acknowledged === 1 && abortedLaunch.modifiedCount === 1
+    // );
+    return (
+      abortedLaunch.acknowledged === true && abortedLaunch.modifiedCount === 1
+    );
+  } catch (error) {
+    throw new Error('abortLaunch error\n' + error);
+  }
 }
 
 module.exports = {
   getAllLaunches: getAllLaunches,
   scheduleNewLaunch: scheduleNewLaunch,
-  abortLaunchByID: abortLaunchByID,
+  abortLaunchByFlightNumber: abortLaunchByFlightNumber,
   existLaunchWithId: existLaunchWithId,
 };
