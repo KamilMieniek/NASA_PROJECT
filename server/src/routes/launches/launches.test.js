@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const request = require('supertest');
 const app = require('../../app');
 const { mongoConnect, mongoDisconnect } = require('../../services/mongo');
@@ -10,16 +9,16 @@ describe('Test launches API', () => {
     await mongoDisconnect();
   });
 
-  describe('Test Get /launches', () => {
+  describe('Test Get /v1/launches', () => {
     test('It should respond with 200 success', () => {
       return request(app)
-        .get('/launches')
+        .get('/v1/launches')
         .expect('Content-type', /json/)
         .expect(200);
     });
   });
 
-  describe('Test POST /launch', () => {
+  describe('Test POST /v1/launch', () => {
     const completeLaunchData = {
       mission: 'USS Enterprise',
       rocket: 'Moje krzeslo',
@@ -39,7 +38,7 @@ describe('Test launches API', () => {
     };
     test('It should respond with 201 created', async () => {
       const response = await request(app)
-        .post('/launches')
+        .post('/v1/launches')
         .send(completeLaunchData)
         .expect('Content-type', /json/)
         .expect(201);
@@ -50,7 +49,7 @@ describe('Test launches API', () => {
     });
     test('It should catch missing required properties', async () => {
       const response = await request(app)
-        .post('/launches')
+        .post('/v1/launches')
         .send(launchDataWithoutDate)
         .expect('Content-type', /json/)
         .expect(400);
@@ -60,7 +59,7 @@ describe('Test launches API', () => {
     });
     test('It should catch bad date format', async () => {
       const response = await request(app)
-        .post('/launches')
+        .post('/v1/launches')
         .send(launchDataWithWrongDate)
         .expect('Content-type', /json/)
         .expect(400);
