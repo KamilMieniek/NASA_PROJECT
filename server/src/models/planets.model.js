@@ -3,8 +3,6 @@ const fs = require('fs');
 
 const planets = require('./planets.mongo');
 
-const habitablePlanets = [];
-
 const path = require('path');
 function isHabitablePlanet(planet) {
   return (
@@ -25,7 +23,7 @@ async function getAllHabitablePlanets() {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error('GetAllHabitablePlanet\n', error);
   }
 }
 
